@@ -9781,10 +9781,10 @@
 	        return (
 	            React.createElement("div", null, 
 	                React.createElement(Row, null, 
-	                    React.createElement(Col, {xs: 3, md: 3, className: "col-centered"}, React.createElement("img", {title: "Amy & Anurag", className: "bride-groom", src: "public/images/bride-groom.png"}))
+	                    React.createElement(Col, {xs: 8, sm: 4, md: 3, className: "col-centered"}, React.createElement("img", {title: "Amy & Anurag", className: "bride-groom", src: "public/images/bride-groom.png"}))
 	                ), 
 	                React.createElement(Row, null, 
-	                    React.createElement(Col, {xs: 4, md: 4, className: "col-centered text-center"}, React.createElement(CountdownTimer, {secondsRemaining: secondsRemaining}))
+	                    React.createElement(Col, {xs: 12, sm: 8, md: 4, className: "col-centered text-center"}, React.createElement(CountdownTimer, {secondsRemaining: secondsRemaining}))
 	                )
 	            )
 	        );
@@ -16700,7 +16700,7 @@
 
 	"use strict";
 
-	var adler32 = __webpack_require__(290);
+	var adler32 = __webpack_require__(289);
 
 	var ReactMarkupChecksum = {
 	  CHECKSUM_ATTR_NAME: 'data-react-checksum',
@@ -16755,7 +16755,7 @@
 
 	var PooledClass = __webpack_require__(101);
 	var CallbackQueue = __webpack_require__(255);
-	var ReactPutListenerQueue = __webpack_require__(289);
+	var ReactPutListenerQueue = __webpack_require__(290);
 	var Transaction = __webpack_require__(256);
 
 	var assign = __webpack_require__(53);
@@ -17025,7 +17025,7 @@
 	 * Copyright 2014, Yahoo! Inc.
 	 * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
 	 */
-	module.exports = __webpack_require__(293);
+	module.exports = __webpack_require__(294);
 
 
 /***/ },
@@ -17039,7 +17039,7 @@
 	'use strict';
 
 	var util = __webpack_require__(329),
-	    BaseStore = __webpack_require__(294),
+	    BaseStore = __webpack_require__(293),
 	    IGNORE_ON_PROTOTYPE = ['statics', 'storeName', 'handlers', 'mixins'];
 
 	function createChainedFunction(one, two) {
@@ -23761,7 +23761,7 @@
 	var PooledClass = __webpack_require__(101);
 	var ReactBrowserEventEmitter = __webpack_require__(117);
 	var ReactInputSelection = __webpack_require__(266);
-	var ReactPutListenerQueue = __webpack_require__(289);
+	var ReactPutListenerQueue = __webpack_require__(290);
 	var Transaction = __webpack_require__(256);
 
 	var assign = __webpack_require__(53);
@@ -25101,6 +25101,44 @@
 	 * LICENSE file in the root directory of this source tree. An additional grant
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 *
+	 * @providesModule adler32
+	 */
+
+	/* jslint bitwise:true */
+
+	"use strict";
+
+	var MOD = 65521;
+
+	// This is a clean-room implementation of adler32 designed for detecting
+	// if markup is not what we expect it to be. It does not need to be
+	// cryptographically strong, only reasonably good at detecting if markup
+	// generated on the server is different than that on the client.
+	function adler32(data) {
+	  var a = 1;
+	  var b = 0;
+	  for (var i = 0; i < data.length; i++) {
+	    a = (a + data.charCodeAt(i)) % MOD;
+	    b = (b + a) % MOD;
+	  }
+	  return a | (b << 16);
+	}
+
+	module.exports = adler32;
+
+
+/***/ },
+/* 290 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
 	 * @providesModule ReactPutListenerQueue
 	 */
 
@@ -25147,44 +25185,6 @@
 	PooledClass.addPoolingTo(ReactPutListenerQueue);
 
 	module.exports = ReactPutListenerQueue;
-
-
-/***/ },
-/* 290 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2014, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule adler32
-	 */
-
-	/* jslint bitwise:true */
-
-	"use strict";
-
-	var MOD = 65521;
-
-	// This is a clean-room implementation of adler32 designed for detecting
-	// if markup is not what we expect it to be. It does not need to be
-	// cryptographically strong, only reasonably good at detecting if markup
-	// generated on the server is different than that on the client.
-	function adler32(data) {
-	  var a = 1;
-	  var b = 0;
-	  for (var i = 0; i < data.length; i++) {
-	    a = (a + data.charCodeAt(i)) % MOD;
-	    b = (b + a) % MOD;
-	  }
-	  return a | (b << 16);
-	}
-
-	module.exports = adler32;
 
 
 /***/ },
@@ -25303,6 +25303,87 @@
 
 /***/ },
 /* 293 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2014, Yahoo! Inc.
+	 * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
+	 */
+	'use strict';
+
+	var util = __webpack_require__(329);
+	var EventEmitter = __webpack_require__(403).EventEmitter;
+	var CHANGE_EVENT = 'change';
+
+	/**
+	 * @class BaseStore
+	 * @extends EventEmitter
+	 * @param dispatcher The dispatcher interface
+	 * @constructor
+	 */
+	function BaseStore(dispatcher) {
+	    this.dispatcher = dispatcher;
+	    this._hasChanged = false;
+	    if (this.initialize) {
+	        this.initialize();
+	    }
+	}
+
+	util.inherits(BaseStore, EventEmitter);
+
+	/**
+	 * Convenience method for getting the store context object.
+	 * @method getContext
+	 * @return {Object} Returns the store context object.
+	 */
+	BaseStore.prototype.getContext = function getContext() {
+	    return this.dispatcher.getContext();
+	};
+
+	/**
+	 * Add a listener for the change event
+	 * @method addChangeListener
+	 * @param {Function} callback
+	 */
+	BaseStore.prototype.addChangeListener = function addChangeListener(callback) {
+	    this.on(CHANGE_EVENT, callback);
+	};
+
+	/**
+	 * Remove a listener for the change event
+	 * @method removeChangeListener
+	 * @param {Function} callback
+	 */
+	BaseStore.prototype.removeChangeListener = function removeChangeListener(callback) {
+	    this.removeListener(CHANGE_EVENT, callback);
+	};
+
+	/**
+	 * Determines whether the store should dehydrate or not. By default, only dehydrates
+	 * if the store has emitted an update event. If no update has been emitted, it is assumed
+	 * that the store is in its default state and therefore does not need to dehydrate.
+	 * @method shouldDehydrate
+	 * @returns {boolean}
+	 */
+	BaseStore.prototype.shouldDehydrate = function shouldDehydrate() {
+	    return this._hasChanged;
+	};
+
+	/**
+	 * Emit a change event
+	 * @method emitChange
+	 * @param {*} param=this
+	 */
+	BaseStore.prototype.emitChange = function emitChange(param) {
+	    this._hasChanged = true;
+	    this.emit(CHANGE_EVENT, param || this);
+	};
+
+	module.exports = BaseStore;
+
+
+/***/ },
+/* 294 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25556,87 +25637,6 @@
 
 	    return Dispatcher;
 	};
-
-
-/***/ },
-/* 294 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2014, Yahoo! Inc.
-	 * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
-	 */
-	'use strict';
-
-	var util = __webpack_require__(329);
-	var EventEmitter = __webpack_require__(403).EventEmitter;
-	var CHANGE_EVENT = 'change';
-
-	/**
-	 * @class BaseStore
-	 * @extends EventEmitter
-	 * @param dispatcher The dispatcher interface
-	 * @constructor
-	 */
-	function BaseStore(dispatcher) {
-	    this.dispatcher = dispatcher;
-	    this._hasChanged = false;
-	    if (this.initialize) {
-	        this.initialize();
-	    }
-	}
-
-	util.inherits(BaseStore, EventEmitter);
-
-	/**
-	 * Convenience method for getting the store context object.
-	 * @method getContext
-	 * @return {Object} Returns the store context object.
-	 */
-	BaseStore.prototype.getContext = function getContext() {
-	    return this.dispatcher.getContext();
-	};
-
-	/**
-	 * Add a listener for the change event
-	 * @method addChangeListener
-	 * @param {Function} callback
-	 */
-	BaseStore.prototype.addChangeListener = function addChangeListener(callback) {
-	    this.on(CHANGE_EVENT, callback);
-	};
-
-	/**
-	 * Remove a listener for the change event
-	 * @method removeChangeListener
-	 * @param {Function} callback
-	 */
-	BaseStore.prototype.removeChangeListener = function removeChangeListener(callback) {
-	    this.removeListener(CHANGE_EVENT, callback);
-	};
-
-	/**
-	 * Determines whether the store should dehydrate or not. By default, only dehydrates
-	 * if the store has emitted an update event. If no update has been emitted, it is assumed
-	 * that the store is in its default state and therefore does not need to dehydrate.
-	 * @method shouldDehydrate
-	 * @returns {boolean}
-	 */
-	BaseStore.prototype.shouldDehydrate = function shouldDehydrate() {
-	    return this._hasChanged;
-	};
-
-	/**
-	 * Emit a change event
-	 * @method emitChange
-	 * @param {*} param=this
-	 */
-	BaseStore.prototype.emitChange = function emitChange(param) {
-	    this._hasChanged = true;
-	    this.emit(CHANGE_EVENT, param || this);
-	};
-
-	module.exports = BaseStore;
 
 
 /***/ },
@@ -33203,7 +33203,7 @@
 
 	var React = __webpack_require__(4);
 	var domUtils = __webpack_require__(415);
-	var EventListener = __webpack_require__(416);
+	var EventListener = __webpack_require__(417);
 
 	var AffixMixin = {
 	  propTypes: {
@@ -33337,7 +33337,7 @@
 
 	var React = __webpack_require__(4);
 	var joinClasses = __webpack_require__(414);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 	var BootstrapMixin = __webpack_require__(350);
 
 
@@ -33442,7 +33442,7 @@
 	var React = __webpack_require__(4);
 	var joinClasses = __webpack_require__(414);
 	var ValidComponentChildren = __webpack_require__(419);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 
 	var Badge = React.createClass({displayName: "Badge",
 	  propTypes: {
@@ -33479,7 +33479,7 @@
 
 	var React = __webpack_require__(4);
 	var joinClasses = __webpack_require__(414);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 	var BootstrapMixin = __webpack_require__(350);
 
 	var Button = React.createClass({displayName: "Button",
@@ -33572,7 +33572,7 @@
 
 	var React = __webpack_require__(4);
 	var joinClasses = __webpack_require__(414);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 	var BootstrapMixin = __webpack_require__(350);
 	var Button = __webpack_require__(352);
 
@@ -33614,7 +33614,7 @@
 
 	var React = __webpack_require__(4);
 	var joinClasses = __webpack_require__(414);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 	var BootstrapMixin = __webpack_require__(350);
 	var Button = __webpack_require__(352);
 
@@ -33649,7 +33649,7 @@
 
 	var React = __webpack_require__(4);
 	var joinClasses = __webpack_require__(414);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 	var cloneWithProps = __webpack_require__(420);
 	var BootstrapMixin = __webpack_require__(350);
 	var ValidComponentChildren = __webpack_require__(419);
@@ -33943,7 +33943,7 @@
 
 	var React = __webpack_require__(4);
 	var joinClasses = __webpack_require__(414);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 	var TransitionEvents = __webpack_require__(421);
 
 	var CarouselItem = React.createClass({displayName: "CarouselItem",
@@ -34041,7 +34041,7 @@
 
 	var React = __webpack_require__(4);
 	var joinClasses = __webpack_require__(414);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 	var constants = __webpack_require__(418);
 
 
@@ -34246,7 +34246,7 @@
 
 	var React = __webpack_require__(4);
 	var joinClasses = __webpack_require__(414);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 	var cloneWithProps = __webpack_require__(420);
 
 	var createChainedFunction = __webpack_require__(422);
@@ -34377,7 +34377,7 @@
 
 	var React = __webpack_require__(4);
 	var joinClasses = __webpack_require__(414);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 	var cloneWithProps = __webpack_require__(420);
 
 	var createChainedFunction = __webpack_require__(422);
@@ -34427,7 +34427,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(4);
-	var EventListener = __webpack_require__(416);
+	var EventListener = __webpack_require__(417);
 
 	/**
 	 * Checks whether a node is within
@@ -34588,7 +34588,7 @@
 
 	var React = __webpack_require__(4);
 	var joinClasses = __webpack_require__(414);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 	var BootstrapMixin = __webpack_require__(350);
 	var constants = __webpack_require__(418);
 
@@ -34661,7 +34661,7 @@
 
 	var React = __webpack_require__(4);
 	var joinClasses = __webpack_require__(414);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 	var Button = __webpack_require__(352);
 
 	var Input = React.createClass({displayName: "Input",
@@ -35039,7 +35039,7 @@
 
 	var React = __webpack_require__(4);
 	var joinClasses = __webpack_require__(414);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 	var BootstrapMixin = __webpack_require__(350);
 
 	var Label = React.createClass({displayName: "Label",
@@ -35070,7 +35070,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(4);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 	var cloneWithProps = __webpack_require__(420);
 
 	var ValidComponentChildren = __webpack_require__(419);
@@ -35107,7 +35107,7 @@
 	var React = __webpack_require__(4);
 	var joinClasses = __webpack_require__(414);
 	var BootstrapMixin = __webpack_require__(350);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 	var cloneWithProps = __webpack_require__(420);
 
 	var ValidComponentChildren = __webpack_require__(419);
@@ -35200,7 +35200,7 @@
 
 	var React = __webpack_require__(4);
 	var joinClasses = __webpack_require__(414);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 
 	var MenuItem = React.createClass({displayName: "MenuItem",
 	  propTypes: {
@@ -35266,10 +35266,10 @@
 
 	var React = __webpack_require__(4);
 	var joinClasses = __webpack_require__(414);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 	var BootstrapMixin = __webpack_require__(350);
 	var FadeMixin = __webpack_require__(362);
-	var EventListener = __webpack_require__(416);
+	var EventListener = __webpack_require__(417);
 
 
 	// TODO:
@@ -35443,7 +35443,7 @@
 	var joinClasses = __webpack_require__(414);
 	var BootstrapMixin = __webpack_require__(350);
 	var CollapsableMixin = __webpack_require__(358);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 	var domUtils = __webpack_require__(415);
 	var cloneWithProps = __webpack_require__(420);
 
@@ -35560,7 +35560,7 @@
 	var React = __webpack_require__(4);
 	var joinClasses = __webpack_require__(414);
 	var BootstrapMixin = __webpack_require__(350);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 	var cloneWithProps = __webpack_require__(420);
 
 	var ValidComponentChildren = __webpack_require__(419);
@@ -35708,7 +35708,7 @@
 
 	var React = __webpack_require__(4);
 	var joinClasses = __webpack_require__(414);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 	var BootstrapMixin = __webpack_require__(350);
 
 	var NavItem = React.createClass({displayName: "NavItem",
@@ -36186,7 +36186,7 @@
 
 	var React = __webpack_require__(4);
 	var joinClasses = __webpack_require__(414);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 	var cloneWithProps = __webpack_require__(420);
 
 	var BootstrapMixin = __webpack_require__(350);
@@ -36390,7 +36390,7 @@
 
 	var React = __webpack_require__(4);
 	var joinClasses = __webpack_require__(414);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 	var cloneWithProps = __webpack_require__(420);
 
 	var BootstrapMixin = __webpack_require__(350);
@@ -36481,7 +36481,7 @@
 
 	var React = __webpack_require__(4);
 	var joinClasses = __webpack_require__(414);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 
 	var PageItem = React.createClass({displayName: "PageItem",
 
@@ -36584,7 +36584,7 @@
 
 	var React = __webpack_require__(4);
 	var joinClasses = __webpack_require__(414);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 	var BootstrapMixin = __webpack_require__(350);
 
 
@@ -36649,7 +36649,7 @@
 	var joinClasses = __webpack_require__(414);
 	var Interpolate = __webpack_require__(366);
 	var BootstrapMixin = __webpack_require__(350);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 	var cloneWithProps = __webpack_require__(420);
 
 	var ValidComponentChildren = __webpack_require__(419);
@@ -36817,7 +36817,7 @@
 
 	var React = __webpack_require__(4);
 	var joinClasses = __webpack_require__(414);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 	var BootstrapMixin = __webpack_require__(350);
 	var DropdownStateMixin = __webpack_require__(361);
 	var Button = __webpack_require__(352);
@@ -36928,7 +36928,7 @@
 
 	var React = __webpack_require__(4);
 	var joinClasses = __webpack_require__(414);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 	var cloneWithProps = __webpack_require__(420);
 
 	var ValidComponentChildren = __webpack_require__(419);
@@ -37208,7 +37208,7 @@
 
 	var React = __webpack_require__(4);
 	var joinClasses = __webpack_require__(414);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 
 	var Table = React.createClass({displayName: "Table",
 	  propTypes: {
@@ -37249,7 +37249,7 @@
 
 	var React = __webpack_require__(4);
 	var joinClasses = __webpack_require__(414);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 	var TransitionEvents = __webpack_require__(421);
 
 	var TabPane = React.createClass({displayName: "TabPane",
@@ -37336,7 +37336,7 @@
 
 	var React = __webpack_require__(4);
 	var joinClasses = __webpack_require__(414);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 	var BootstrapMixin = __webpack_require__(350);
 
 
@@ -37390,7 +37390,7 @@
 
 	var React = __webpack_require__(4);
 	var joinClasses = __webpack_require__(414);
-	var classSet = __webpack_require__(417);
+	var classSet = __webpack_require__(416);
 	var BootstrapMixin = __webpack_require__(350);
 
 	var Well = React.createClass({displayName: "Well",
@@ -40119,6 +40119,50 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This file contains an unmodified version of:
+	 * https://github.com/facebook/react/blob/v0.12.0/src/vendor/stubs/cx.js
+	 *
+	 * This source code is licensed under the BSD-style license found here:
+	 * https://github.com/facebook/react/blob/v0.12.0/LICENSE
+	 * An additional grant of patent rights can be found here:
+	 * https://github.com/facebook/react/blob/v0.12.0/PATENTS
+	 */
+
+	/**
+	 * This function is used to mark string literals representing CSS class names
+	 * so that they can be transformed statically. This allows for modularization
+	 * and minification of CSS class names.
+	 *
+	 * In static_upstream, this function is actually implemented, but it should
+	 * eventually be replaced with something more descriptive, and the transform
+	 * that is used in the main stack should be ported for use elsewhere.
+	 *
+	 * @param string|object className to modularize, or an object of key/values.
+	 *                      In the object case, the values are conditions that
+	 *                      determine if the className keys should be included.
+	 * @param [string ...]  Variable list of classNames in the string case.
+	 * @return string       Renderable space-separated CSS className.
+	 */
+	function cx(classNames) {
+	  if (typeof classNames == 'object') {
+	    return Object.keys(classNames).filter(function(className) {
+	      return classNames[className];
+	    }).join(' ');
+	  } else {
+	    return Array.prototype.join.call(arguments, ' ');
+	  }
+	}
+
+	module.exports = cx;
+
+/***/ },
+/* 417 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
 	 * Copyright 2013-2014 Facebook, Inc.
 	 *
 	 * This file contains a modified version of:
@@ -40173,50 +40217,6 @@
 
 	module.exports = EventListener;
 
-
-/***/ },
-/* 417 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2014, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This file contains an unmodified version of:
-	 * https://github.com/facebook/react/blob/v0.12.0/src/vendor/stubs/cx.js
-	 *
-	 * This source code is licensed under the BSD-style license found here:
-	 * https://github.com/facebook/react/blob/v0.12.0/LICENSE
-	 * An additional grant of patent rights can be found here:
-	 * https://github.com/facebook/react/blob/v0.12.0/PATENTS
-	 */
-
-	/**
-	 * This function is used to mark string literals representing CSS class names
-	 * so that they can be transformed statically. This allows for modularization
-	 * and minification of CSS class names.
-	 *
-	 * In static_upstream, this function is actually implemented, but it should
-	 * eventually be replaced with something more descriptive, and the transform
-	 * that is used in the main stack should be ported for use elsewhere.
-	 *
-	 * @param string|object className to modularize, or an object of key/values.
-	 *                      In the object case, the values are conditions that
-	 *                      determine if the className keys should be included.
-	 * @param [string ...]  Variable list of classNames in the string case.
-	 * @return string       Renderable space-separated CSS className.
-	 */
-	function cx(classNames) {
-	  if (typeof classNames == 'object') {
-	    return Object.keys(classNames).filter(function(className) {
-	      return classNames[className];
-	    }).join(' ');
-	  } else {
-	    return Array.prototype.join.call(arguments, ' ');
-	  }
-	}
-
-	module.exports = cx;
 
 /***/ },
 /* 418 */
