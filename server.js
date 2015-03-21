@@ -1,8 +1,18 @@
-#!/bin/env node
- //  OpenShift sample Node application
-var express = require('express');
-var fs = require('fs');
+'use strict';
 
+require('node-jsx').install({
+    extension: '.jsx'
+});
+
+var express = require('express');
+// var fs = require('fs');
+
+var serialize = require('serialize-javascript');
+var navigateAction = require('flux-router-component').navigateAction;
+var debug = require('debug')('newsily');
+var React = require('react');
+var app = require('./app');
+var htmlComponent = React.createFactory(require('./components/Html.jsx'));
 
 /**
  *  Define the sample application.
@@ -25,12 +35,12 @@ var App = function() {
         self.ipaddress = process.env.OPENSHIFT_NODEJS_IP;
         self.port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
 
-        if (typeof self.ipaddress === "undefined") {
+        if (typeof self.ipaddress === 'undefined') {
             //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
             //  allows us to run/test the app locally.
             console.warn('No OPENSHIFT_NODEJS_IP var, using 127.0.0.1');
-            self.ipaddress = "127.0.0.1";
-        };
+            self.ipaddress = '127.0.0.1';
+        }
     };
 
 
@@ -38,7 +48,7 @@ var App = function() {
      *  Populate the cache.
      */
     // self.populateCache = function() {
-    //     if (typeof self.zcache === "undefined") {
+    //     if (typeof self.zcache === 'undefined') {
     //         self.zcache = { 'index.html': '' };
     //     }
 
@@ -62,7 +72,7 @@ var App = function() {
      *  @param {string} sig  Signal to terminate on.
      */
     self.terminator = function(sig) {
-        if (typeof sig === "string") {
+        if (typeof sig === 'string') {
             console.log('%s: Received %s - terminating sample app ...',
                 Date(Date.now()), sig);
             process.exit(1);
@@ -83,7 +93,7 @@ var App = function() {
         // Removed 'SIGPIPE' from the list - bugz 852598.
         ['SIGHUP', 'SIGINT', 'SIGQUIT', 'SIGILL', 'SIGTRAP', 'SIGABRT',
             'SIGBUS', 'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGUSR2', 'SIGTERM'
-        ].forEach(function(element, index, array) {
+        ].forEach(function(element) {
             process.on(element, function() {
                 self.terminator(element);
             });
@@ -102,8 +112,8 @@ var App = function() {
     //     self.routes = {};
 
     //     self.routes['/asciimo'] = function(req, res) {
-    //         var link = "http://i.imgur.com/kmbjB.png";
-    //         res.send("<html><body><img src='" + link + "'></body></html>");
+    //         var link = 'http://i.imgur.com/kmbjB.png';
+    //         res.send('<html><body><img src='' + link + ''></body></html>');
     //     };
 
     //     self.routes['/'] = function(req, res) {
@@ -118,18 +128,6 @@ var App = function() {
      *  the handlers.
      */
     self.initializeServer = function() {
-
-        require('node-jsx').install({
-            extension: '.jsx'
-        });
-
-        var express = require('express');
-        var serialize = require('serialize-javascript');
-        var navigateAction = require('flux-router-component').navigateAction;
-        var debug = require('debug')('newsily');
-        var React = require('react');
-        var app = require('./app');
-        var htmlComponent = React.createFactory(require('./components/Html.jsx'));
 
         var server = self.app = express();
 
@@ -172,6 +170,7 @@ var App = function() {
                     }));
 
                     debug('Sending markup');
+                    res.set('Content-Type', 'text/html');
                     res.write('<!DOCTYPE html>' + html);
                     res.end();
                 });
