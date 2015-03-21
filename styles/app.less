@@ -1,0 +1,28 @@
+@import "../node_modules/material-ui/src/less/scaffolding.less";
+
+/* Define a custom less file to override any variables defined in scaffolding.less */
+@import "material-ui-custom/material-ui-custom.less";
+
+@import "../node_modules/material-ui/src/less/components.less";
+
+/* Custom bootstrap grid */
+@import "bootstrap-custom/bootstrap";
+
+/* custom font icons */
+@import "font-icons/style.less";
+
+@import "atomic/atomic";
+
+@import "components/components";
+
+/* Routes */
+@import "home/home";
+
+a {
+	color: @accent-1-color;
+	text-decoration: none;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
