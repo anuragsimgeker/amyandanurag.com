@@ -17,7 +17,7 @@ var Home = React.createClass({
         return (
             <div>
                 <Row>
-                    <Col xs={8} sm={4} md={3} className="col-centered"><img title="Amy & Anurag" className="bride-groom" src="public/images/bride-groom.png"/></Col>
+                    <Col xs={8} sm={4} md={3} className="col-centered"><img title="Amy & Anurag - Oct 24, 2015 02:00PM" className="bride-groom" src="public/images/bride-groom.png"/></Col>
                 </Row>
                 <Row>
                     <Col xs={12} sm={8} md={4} className="col-centered text-center"><CountdownTimer secondsRemaining={secondsRemaining} /></Col>
